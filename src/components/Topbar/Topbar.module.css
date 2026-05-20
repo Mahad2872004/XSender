@@ -1,0 +1,243 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background-color: var(--bg-color);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.campaignsLayout {
+  flex: 1;
+  justify-content: space-between;
+}
+
+.searchContainer {
+  position: relative;
+  width: 320px;
+}
+
+.campaignsLayout .searchContainer {
+  width: 600px;
+  max-width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.searchInput:focus {
+  border-color: var(--accent-green);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.iconButton:hover {
+  color: var(--text-primary);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.profileName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.profilePlan {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Automation Layout Styles */
+.botInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.botIconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #e0f2fe;
+  color: var(--status-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.botTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.botDraft {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.automationActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.controlBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.controlBtn:hover {
+  background-color: #e2e8f0;
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: #cbd5e1;
+  margin: 0 4px;
+}
+
+.zoomText {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 8px;
+}
+
+.btnSave {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btnTest {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: var(--status-green);
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.publishToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 8px;
+}
+
+.publishLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.toggleBg {
+  width: 40px;
+  height: 20px;
+  background-color: #e2e8f0;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggleKnob {
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
