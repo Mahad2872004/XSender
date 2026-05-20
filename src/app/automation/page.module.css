@@ -1,0 +1,436 @@
+.automationContainer {
+  margin: -24px -32px -32px -32px; /* Pulling to edges */
+  height: calc(100vh - 88px);
+  display: flex;
+  background-color: #1e1e2d;
+  overflow: hidden;
+}
+
+/* Canvas Area */
+.canvasArea {
+  flex: 1;
+  position: relative;
+}
+
+.floatingToolbar {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  background-color: white;
+  border-radius: 32px;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.toolBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.toolBtn:hover {
+  background-color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.toolBtn.active {
+  background-color: #d1fae5;
+  color: var(--status-green);
+}
+
+.toolBtn.danger {
+  color: var(--status-red);
+}
+.toolBtn.danger:hover {
+  background-color: #fee2e2;
+}
+
+.statusBar {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.liveIndicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-green);
+}
+
+.statusDivider {
+  width: 1px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Nodes */
+.node {
+  position: absolute;
+  width: 240px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nodeTrigger {
+  left: 140px;
+  top: 180px;
+  background-color: #2b2b3f;
+  border: 1px solid var(--status-green);
+}
+
+.nodeTriggerHeader {
+  background-color: var(--status-green);
+  color: white;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nodeTriggerBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nodeTriggerTitle {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nodeTriggerDesc {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.nodeMessage {
+  left: 480px;
+  top: 160px;
+  background-color: white;
+}
+
+.nodeMessageHeader {
+  background-color: #0d5c46;
+  color: white;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nodeMessageBody {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nodeMessageText {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.nodeTags {
+  display: flex;
+  gap: 6px;
+}
+
+.nodeTag {
+  background-color: #e2e8f0;
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.connectionLine {
+  position: absolute;
+  top: 220px;
+  left: 380px;
+  width: 100px;
+  height: 2px;
+  border-top: 2px dashed var(--status-green);
+  z-index: 0;
+}
+
+/* Settings Drawer */
+.settingsDrawer {
+  width: 380px;
+  background-color: white;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.drawerHeader {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drawerTitleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawerTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.drawerSubtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.drawerClose {
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.drawerScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.addNewLink {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--status-green);
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.messageContentBox {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formattingBar {
+  display: flex;
+  gap: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.formatIcon {
+  cursor: pointer;
+}
+
+.textArea {
+  width: 100%;
+  height: 80px;
+  border: none;
+  background: transparent;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.charCount {
+  align-self: flex-end;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.mediaBox {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #f8fafc;
+  cursor: pointer;
+}
+
+.mediaIcon {
+  color: var(--status-green);
+}
+
+.mediaTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mediaSubtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.buttonList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buttonItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.dragHandle {
+  color: #cbd5e1;
+  cursor: grab;
+}
+
+.buttonText {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.trashIcon {
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.trashIcon:hover {
+  color: var(--status-red);
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.toggleLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.toggleWrapper {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #e2e8f0;
+  position: relative;
+  cursor: pointer;
+}
+
+.toggleWrapper.on {
+  background-color: var(--status-green);
+}
+
+.toggleKnob {
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.toggleWrapper.on .toggleKnob {
+  transform: translateX(16px);
+}
+
+.drawerFooter {
+  padding: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.applyBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--status-green);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+}

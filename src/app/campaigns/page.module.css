@@ -1,0 +1,504 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 32px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.draftBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--status-green);
+  background-color: #d1fae5;
+  padding: 6px 12px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.draftBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-green);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 800px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stepCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stepCompleted .stepCircle {
+  background-color: var(--status-green);
+  color: white;
+}
+
+.stepActive .stepCircle {
+  background-color: white;
+  border: 2px solid var(--status-green);
+  color: var(--status-green);
+}
+
+.stepInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepSubtitle {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.stepCompleted .stepSubtitle {
+  color: var(--status-green);
+}
+
+.stepActive .stepSubtitle {
+  color: var(--status-green);
+}
+
+.stepTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.stepCompleted .stepTitle,
+.stepActive .stepTitle {
+  color: var(--text-primary);
+}
+
+.stepLine {
+  flex: 1;
+  height: 2px;
+  background-color: #e2e8f0;
+  min-width: 40px;
+}
+
+.stepLineCompleted {
+  background-color: var(--status-green);
+}
+
+.content {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+}
+
+.templatesSection {
+  flex: 1;
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+}
+
+.templatesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.templatesTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.filterPills {
+  display: flex;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.filterPill {
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.filterPill.active {
+  background-color: white;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.templatesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.templateCard {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.templateCard:hover {
+  border-color: #cbd5e1;
+}
+
+.templateCard.selected {
+  border: 2px solid var(--accent-green);
+  background-color: #f0fdf4;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.cardTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconMarketing {
+  background-color: #d1fae5;
+  color: var(--status-green);
+}
+
+.iconUtility {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.iconAuth {
+  background-color: #fee2e2;
+  color: var(--status-red);
+}
+
+.cardTitleInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cardCategory {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.catMarketing { color: var(--status-green); }
+.catUtility { color: #0284c7; }
+.catAuth { color: var(--status-red); }
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.statusApproved { background-color: #d1fae5; color: var(--status-green); }
+.statusPending { background-color: #fef3c7; color: #d97706; }
+.statusRejected { background-color: #fee2e2; color: var(--status-red); }
+
+.cardBody {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.selectedBadge {
+  color: var(--status-green);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Phone Preview Section */
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 340px;
+}
+
+.phone {
+  width: 320px;
+  height: 640px;
+  background-color: #1e293b;
+  border-radius: 40px;
+  padding: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.phoneScreen {
+  width: 100%;
+  height: 100%;
+  background-color: #efeae2; /* Whatsapp-like bg */
+  border-radius: 32px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.phoneHeader {
+  background-color: #0d5c46;
+  color: white;
+  padding: 40px 16px 12px; /* Top padding for notch/status bar */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.phoneAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: white;
+  color: #0d5c46;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.phoneTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.phoneName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.phoneStatus {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.phoneBody {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.phoneDate {
+  align-self: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.messageBubble {
+  background-color: white;
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  padding: 4px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.messageImage {
+  width: 100%;
+  height: 140px;
+  border-radius: 6px;
+  object-fit: cover;
+  background-color: #f97316;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.imageTitle {
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.imageSubtitle {
+  font-size: 12px;
+  font-weight: 700;
+  background-color: black;
+  padding: 2px 8px;
+  margin-top: 4px;
+}
+
+.messageText {
+  padding: 8px;
+  font-size: 13px;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.variable {
+  background-color: #fef08a;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.messageTime {
+  font-size: 10px;
+  color: var(--text-secondary);
+  align-self: flex-end;
+  padding: 0 8px 4px;
+}
+
+.messageButton {
+  border-top: 1px solid #e2e8f0;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #0ea5e9;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.phoneInputArea {
+  padding: 8px 12px;
+  background-color: #f0f2f5;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.phoneInput {
+  flex: 1;
+  background-color: white;
+  height: 36px;
+  border-radius: 18px;
+  padding: 0 16px;
+}
+
+.phoneMic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #00a884;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.btnPrev {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #e2e8f0;
+  color: var(--text-primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btnNext {
+  flex: 2;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--accent-green);
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+}
