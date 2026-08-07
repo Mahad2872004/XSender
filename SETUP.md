@@ -63,6 +63,32 @@ The worker is a separate process on purpose: Vercel functions cannot hold work
 open, so anything delayed, scheduled, retried, or batched goes through the
 Postgres job queue instead.
 
+### Deploying without a worker process
+
+If the queue has no drainer, nothing fails — jobs simply sit at `pending` and
+delayed flow steps never wake. On a host that offers no always-on process,
+`supabase/migrations/0010_queue_cron.sql` schedules pg_cron to POST
+`/api/jobs/drain` once a minute instead, which drains a batch per call through
+the same `drainBatch` the worker uses.
+
+To turn it on:
+
+1. `QUEUE_DRAIN_SECRET=` — 32 random bytes, set on the host. Without it the
+   route returns 503 rather than accepting unauthenticated calls.
+2. Store the target and the same secret in Supabase Vault, then apply the
+   migration:
+
+   ```sql
+   select vault.create_secret('https://<app>/api/jobs/drain', 'queue_drain_url');
+   select vault.create_secret('<QUEUE_DRAIN_SECRET>', 'queue_drain_secret');
+   ```
+
+3. Verify: `select * from cron.job_run_details order by start_time desc limit 5;`
+
+Tradeoffs versus the worker: jobs start within ~1 minute instead of ~1 second,
+and a backlog drains in 50-second slices rather than continuously. Running both
+at once is safe — `claim_jobs` uses `FOR UPDATE SKIP LOCKED`.
+
 ## 5. First run
 
 1. Open <http://localhost:3000> → redirected to `/signup`
@@ -94,5 +120,8 @@ the engine entered and which branch it took.
 - **Tenancy**: server code uses the service-role key, which bypasses RLS.
   Isolation is enforced in `src/server/db/tenancy.ts` — always go through
   `ctx.table(...)`, never `supabaseAdmin()` directly in feature code.
-- **Migrations** are numbered `0001`–`0007`. Add new ones with the next number;
+- **Migrations** are numbered `0001`–`0010`. Add new ones with the next number;
   never edit an applied migration.
+- **Machine-to-machine routes** (`/api/webhooks`, `/api/jobs`) are excluded from
+  the matcher in `src/proxy.ts` and carry their own credential. Anything added
+  under those paths is unauthenticated by default — check the secret yourself.

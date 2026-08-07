@@ -21,6 +21,15 @@ const serverSchema = z.object({
   ENCRYPTION_KEY: z.string().min(1),
 });
 
+/**
+ * Only the cron-triggered queue drain needs this, and only in deployments that
+ * have no worker process. Kept out of serverSchema deliberately: a missing
+ * value should fail that one route, not every server render.
+ */
+const queueSchema = z.object({
+  QUEUE_DRAIN_SECRET: z.string().min(16),
+});
+
 function format(error: z.ZodError, scope: string): never {
   const missing = error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n');
   throw new Error(`Invalid ${scope} environment configuration:\n${missing}\n\nSee .env.example.`);
@@ -28,6 +37,7 @@ function format(error: z.ZodError, scope: string): never {
 
 let cachedPublic: z.infer<typeof publicSchema> | null = null;
 let cachedServer: z.infer<typeof serverSchema> | null = null;
+let cachedQueue: z.infer<typeof queueSchema> | null = null;
 
 export function publicEnv() {
   if (cachedPublic) return cachedPublic;
@@ -59,4 +69,19 @@ export function serverEnv() {
   if (!parsed.success) format(parsed.error, 'server');
   cachedServer = parsed.data;
   return cachedServer;
+}
+
+export function queueEnv() {
+  if (typeof window !== 'undefined') {
+    throw new Error('queueEnv() was called from the browser.');
+  }
+  if (cachedQueue) return cachedQueue;
+
+  const parsed = queueSchema.safeParse({
+    QUEUE_DRAIN_SECRET: process.env.QUEUE_DRAIN_SECRET,
+  });
+
+  if (!parsed.success) format(parsed.error, 'queue');
+  cachedQueue = parsed.data;
+  return cachedQueue;
 }
