@@ -9,16 +9,16 @@
  *   npm run worker:start   # production
  *
  * Handlers are registered by feature modules via registerHandler(); this file
- * only owns the loop, the backoff, and shutdown.
+ * only owns the loop, the backoff, and shutdown. The work itself is drainBatch,
+ * shared with the cron-triggered /api/jobs/drain route so a deployment without
+ * a spare process still drains the queue on the same code path.
  */
 
-import { randomUUID } from 'node:crypto';
-// Side-effect import: registers every job handler before the loop starts.
-import '@/server/queue/register-all';
-import { claimJobs, completeJob, failJob, reapStalledJobs } from '@/server/queue/jobs';
-import { registeredJobTypes, resolveHandler } from '@/server/queue/handlers';
+import { drainBatch, newWorkerId } from '@/server/queue/drain';
+import { reapStalledJobs } from '@/server/queue/jobs';
+import { registeredJobTypes } from '@/server/queue/handlers';
 
-const WORKER_ID = `worker-${process.pid}-${randomUUID().slice(0, 8)}`;
+const WORKER_ID = newWorkerId('worker');
 const BATCH_SIZE = Number(process.env.WORKER_BATCH_SIZE ?? 10);
 const IDLE_DELAY_MS = Number(process.env.WORKER_IDLE_DELAY_MS ?? 1000);
 const REAP_INTERVAL_MS = 60_000;
@@ -41,27 +41,24 @@ async function runOnce(): Promise<number> {
     if (reaped > 0) log('warn', `Reclaimed ${reaped} stalled job(s)`);
   }
 
-  const jobs = await claimJobs(WORKER_ID, BATCH_SIZE);
+  const { claimed } = await drainBatch({
+    workerId: WORKER_ID,
+    batchSize: BATCH_SIZE,
+    onJob: (outcome) => {
+      if (outcome.status === 'completed') {
+        log('info', `Completed ${outcome.job.type}`, { jobId: outcome.job.id, ms: outcome.ms });
+      } else {
+        log('error', `Failed ${outcome.job.type}`, {
+          jobId: outcome.job.id,
+          attempt: outcome.job.attempts,
+          maxAttempts: outcome.job.max_attempts,
+          error: outcome.error,
+        });
+      }
+    },
+  });
 
-  for (const job of jobs) {
-    const startedAt = Date.now();
-    try {
-      await resolveHandler(job.type)(job);
-      await completeJob(job.id);
-      log('info', `Completed ${job.type}`, { jobId: job.id, ms: Date.now() - startedAt });
-    } catch (cause) {
-      // failJob decides between retry-with-backoff and dead-letter.
-      await failJob(job, cause);
-      log('error', `Failed ${job.type}`, {
-        jobId: job.id,
-        attempt: job.attempts,
-        maxAttempts: job.max_attempts,
-        error: cause instanceof Error ? cause.message : String(cause),
-      });
-    }
-  }
-
-  return jobs.length;
+  return claimed;
 }
 
 async function main() {

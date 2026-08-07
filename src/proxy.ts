@@ -72,9 +72,12 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Everything except Next internals, the Meta/payment webhooks (which
-     * authenticate by signature, not session), and static assets.
+     * Everything except Next internals, static assets, and the machine-to-machine
+     * routes that carry their own credential instead of a session: the
+     * Meta/payment webhooks (signature-verified) and the cron queue drain
+     * (shared secret). Leaving those in would redirect the caller to /login and
+     * silently stop webhooks and job processing.
      */
-    '/((?!_next/static|_next/image|api/webhooks|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!_next/static|_next/image|api/webhooks|api/jobs|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };
