@@ -241,17 +241,3 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-
-/* Builder mode: a way back, and nothing else competing with its own toolbar. */
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.backLink:hover {
-  color: var(--text-primary);
-}
