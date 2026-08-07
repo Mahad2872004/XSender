@@ -43,7 +43,7 @@ export default function RecentConversations() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Recent Conversations</h2>
-        <Link href="/conversations" className={styles.viewAll}>View All</Link>
+        <Link href="/inbox" className={styles.viewAll}>View All</Link>
       </div>
 
       <table className={styles.table}>

@@ -1,31 +1,19 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Sidebar from '@/components/Sidebar/Sidebar';
-import Topbar from '@/components/Topbar/Topbar';
 
 export const metadata: Metadata = {
-  title: 'Xsender Dashboard',
-  description: 'A modern messaging and order dashboard',
+  title: 'xSender',
+  description: 'Automate the manual chat, order, and booking work your team does by hand.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+/**
+ * Root layout holds only the document shell. The dashboard chrome lives in
+ * (app)/layout.tsx so the auth screens can render without a sidebar.
+ */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-          <Sidebar />
-          <div style={{ flex: 1, marginLeft: 'var(--sidebar-width)', display: 'flex', flexDirection: 'column', height: '100vh' }}>
-            <Topbar />
-            <main style={{ flex: 1, overflowY: 'auto', padding: '0 32px 32px 32px' }}>
-              {children}
-            </main>
-          </div>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
