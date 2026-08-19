@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, Bell, HelpCircle, ChevronLeft } from 'lucide-react';
+import { APP } from '@/lib/routes';
 import WorkspaceSwitcher, { type WorkspaceOption } from './WorkspaceSwitcher';
 import styles from './Topbar.module.css';
 
@@ -12,20 +13,20 @@ import styles from './Topbar.module.css';
  * chain of if-statements so adding a screen is a one-line change.
  */
 const ROUTES: Array<{ prefix: string; title: string; placeholder?: string }> = [
-  { prefix: '/inbox', title: 'Unified Inbox', placeholder: 'Search conversations…' },
-  { prefix: '/contacts', title: 'Contacts', placeholder: 'Search contacts…' },
-  { prefix: '/flows', title: 'Flows', placeholder: 'Search flows and templates…' },
-  { prefix: '/simulator', title: 'Simulator' },
-  { prefix: '/campaigns', title: 'Campaigns', placeholder: 'Search templates, audiences…' },
-  { prefix: '/templates', title: 'Message Templates', placeholder: 'Search templates…' },
-  { prefix: '/menu', title: 'Menu & Services', placeholder: 'Search items…' },
-  { prefix: '/orders', title: 'Orders', placeholder: 'Search orders…' },
-  { prefix: '/bookings', title: 'Bookings' },
-  { prefix: '/payments', title: 'Payments' },
-  { prefix: '/reports', title: 'Analytics', placeholder: 'Search insights…' },
-  { prefix: '/billing', title: 'Billing & Usage' },
-  { prefix: '/settings', title: 'Settings' },
-  { prefix: '/welcome', title: 'Set up' },
+  { prefix: APP.inbox, title: 'Unified Inbox', placeholder: 'Search conversations…' },
+  { prefix: APP.contacts, title: 'Contacts', placeholder: 'Search contacts…' },
+  { prefix: APP.flows, title: 'Flows', placeholder: 'Search flows and templates…' },
+  { prefix: APP.simulator, title: 'Simulator' },
+  { prefix: APP.campaigns, title: 'Campaigns', placeholder: 'Search templates, audiences…' },
+  { prefix: APP.templates, title: 'Message Templates', placeholder: 'Search templates…' },
+  { prefix: APP.menu, title: 'Menu & Services', placeholder: 'Search items…' },
+  { prefix: APP.orders, title: 'Orders', placeholder: 'Search orders…' },
+  { prefix: APP.bookings, title: 'Bookings' },
+  { prefix: APP.payments, title: 'Payments' },
+  { prefix: APP.reports, title: 'Analytics', placeholder: 'Search insights…' },
+  { prefix: APP.billing, title: 'Billing & Usage' },
+  { prefix: APP.settings, title: 'Settings' },
+  { prefix: APP.welcome, title: 'Set up' },
 ];
 
 function routeFor(pathname: string) {
@@ -44,16 +45,17 @@ export default function Topbar({
 
   const title = route?.title ?? 'Dashboard';
   const placeholder =
-    route?.placeholder ?? (pathname === '/' ? 'Search conversations…' : undefined);
+    route?.placeholder ??
+    (pathname === APP.dashboard ? 'Search conversations…' : undefined);
 
   // The builder brings its own toolbar — flow name, save state, publish — so
   // the global bar just gets out of its way.
-  const isBuilder = /^\/flows\/[^/]+$/.test(pathname);
+  const isBuilder = new RegExp(`^${APP.flows}/[^/]+$`).test(pathname);
 
   if (isBuilder) {
     return (
       <header className={styles.topbar}>
-        <Link href="/flows" className={styles.backLink}>
+        <Link href={APP.flows} className={styles.backLink}>
           <ChevronLeft size={16} />
           All flows
         </Link>

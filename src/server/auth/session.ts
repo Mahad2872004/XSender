@@ -4,6 +4,7 @@ import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
+import { APP, PUBLIC } from '@/lib/routes';
 import { currentUser } from '@/server/db/session-client';
 import {
   contextFromMembership,
@@ -29,7 +30,7 @@ export const getUser = cache(async (): Promise<User | null> => currentUser());
 
 export const requireUser = cache(async (): Promise<User> => {
   const user = await getUser();
-  if (!user) redirect('/login');
+  if (!user) redirect(PUBLIC.login);
   return user;
 });
 
@@ -55,7 +56,7 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
   const user = await requireUser();
   const memberships = await userWorkspaces();
 
-  if (memberships.length === 0) redirect('/onboarding');
+  if (memberships.length === 0) redirect(PUBLIC.onboarding);
 
   const cookieStore = await cookies();
   const preferred = cookieStore.get(ACTIVE_WORKSPACE_COOKIE)?.value;
@@ -72,6 +73,6 @@ export const requireWorkspace = cache(async (): Promise<WorkspaceContext> => {
  */
 export async function requireOnboarded(): Promise<WorkspaceContext> {
   const ctx = await requireWorkspace();
-  if (!ctx.workspace.onboarded_at) redirect('/welcome');
+  if (!ctx.workspace.onboarded_at) redirect(APP.welcome);
   return ctx;
 }

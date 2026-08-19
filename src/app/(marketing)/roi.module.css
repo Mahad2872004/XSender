@@ -1,0 +1,235 @@
+.calculator {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (min-width: 940px) {
+  .calculator {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 32px;
+  }
+}
+
+/* ---------- Inputs ---------- */
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 28px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14.5px;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--brand-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.select,
+.number {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  outline: none;
+}
+
+.select:focus,
+.number:focus {
+  border-color: var(--brand-action);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.range {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  border-radius: 999px;
+  background: var(--border-color);
+  outline: none;
+  cursor: pointer;
+}
+
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand-ink);
+  border: 3px solid var(--card-bg);
+  box-shadow: 0 1px 4px rgba(7, 19, 15, 0.3);
+  cursor: grab;
+}
+
+.range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand-ink);
+  border: 3px solid var(--card-bg);
+  cursor: grab;
+}
+
+.range:focus-visible {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* ---------- Results ---------- */
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
+  background: var(--surface-dark);
+  color: var(--text-on-dark);
+  border-radius: var(--radius-lg);
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.headlineLabel {
+  font-size: 14px;
+  color: var(--text-on-dark-muted);
+}
+
+.headlineValue,
+.headlineValueMuted {
+  font-size: clamp(38px, 6vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.headlineValue {
+  color: var(--brand-action);
+}
+
+.headlineValueMuted {
+  color: var(--text-on-dark-muted);
+}
+
+.headlineUnit {
+  font-size: 14px;
+  color: var(--text-on-dark-muted);
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.row,
+.rowCost {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14.5px;
+}
+
+.row dt,
+.rowCost dt {
+  color: var(--text-on-dark-muted);
+}
+
+.row dd {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Costs are shown, not buried — the calculator is only persuasive if the
+   subtractions are visible. */
+.rowCost dd {
+  font-weight: 650;
+  color: #fca5a5;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-on-dark-muted);
+}
+
+.payback {
+  padding: 13px 15px;
+  border-radius: var(--radius-sm);
+  background: rgba(16, 185, 129, 0.12);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-on-dark);
+}
+
+.payback strong {
+  color: var(--brand-action);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-action);
+  color: #04231a;
+  font-size: 16px;
+  font-weight: 650;
+  transition: background 0.15s ease;
+}
+
+.cta:hover {
+  background: #34d399;
+}
+
+.assumptions {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+}
