@@ -1,3 +1,4 @@
+import { APP } from '@/lib/routes';
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/server/auth/session';
 import { listWorkspacesForUser } from '@/server/db/tenancy';
@@ -14,7 +15,7 @@ export default async function OnboardingPage() {
   const user = await requireUser();
   const memberships = await listWorkspacesForUser(user.id);
 
-  if (memberships.length > 0) redirect('/');
+  if (memberships.length > 0) redirect(APP.dashboard);
 
   return (
     <>

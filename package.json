@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "smoke": "tsx --env-file=.env scripts/smoke-test.ts",
-    "seed": "tsx --env-file=.env scripts/seed-workspace.ts"
+    "seed": "tsx --env-file=.env scripts/seed-workspace.ts",
+    "demo:check": "tsx --env-file=.env scripts/demo-check.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

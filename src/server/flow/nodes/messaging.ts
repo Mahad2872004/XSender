@@ -4,6 +4,8 @@ import {
   TriggerNodeConfigSchema,
 } from '@/lib/schemas/flow';
 import { inboundMatchValue } from '@/lib/schemas/message';
+import { parseCustomerDate } from '@/lib/parse-date';
+import { formatInZone, parseDateString, zonedTimeToUtc } from '@/lib/timezone';
 import type { OutboundPayload } from '@/lib/schemas/message';
 import { matchNumberedChoice } from '@/server/channels/types';
 import type { NodeDefinition } from '../node-types';
@@ -108,7 +110,14 @@ export const askQuestionNode: NodeDefinition<typeof AskQuestionConfigSchema> = {
 
   async resume(config, runtime, input, awaiting) {
     const raw = inboundMatchValue(input.payload);
-    const parsed = interpret(config.expects, raw, input, awaiting.options);
+    const parsed = interpret(
+      config.expects,
+      raw,
+      input,
+      awaiting.options,
+      runtime.ctx.workspace.locale || 'en-US',
+      runtime.ctx.workspace.timezone || 'UTC'
+    );
 
     if (!parsed.ok) {
       const attempts = awaiting.attempts + 1;
@@ -135,6 +144,13 @@ export const askQuestionNode: NodeDefinition<typeof AskQuestionConfigSchema> = {
 
     runtime.setVariable(config.saveAs, parsed.value);
 
+    // Read an ambiguous date back before moving on. Cheaper than a wrong
+    // appointment, and the customer can correct it in the next message.
+    if (parsed.confirm) {
+      runtime.send({ type: 'text', text: `Got it — ${parsed.confirm}.` });
+      runtime.note({ confirmedReading: parsed.confirm });
+    }
+
     // A chosen option branches on its own id; free-text answers take 'next'.
     const handle = parsed.optionId ?? 'next';
     return { kind: 'advance', handle };
@@ -142,7 +158,13 @@ export const askQuestionNode: NodeDefinition<typeof AskQuestionConfigSchema> = {
 };
 
 type Interpreted =
-  | { ok: true; value: unknown; optionId?: string }
+  | {
+      ok: true;
+      value: unknown;
+      optionId?: string;
+      /** Human reading of the answer, sent back when it could be misread. */
+      confirm?: string;
+    }
   | { ok: false; reason: string };
 
 /** Validate and coerce the customer's answer against what the question expects. */
@@ -150,7 +172,9 @@ function interpret(
   expects: (typeof AskQuestionConfigSchema)['_output']['expects'],
   raw: string,
   input: Parameters<NonNullable<typeof askQuestionNode.resume>>[2],
-  options?: Array<{ id: string; title: string }>
+  options: Array<{ id: string; title: string }> | undefined,
+  locale: string,
+  timeZone: string
 ): Interpreted {
   switch (expects.kind) {
     case 'text':
@@ -183,10 +207,37 @@ function interpret(
     }
 
     case 'date': {
-      const parsed = new Date(raw);
-      return Number.isNaN(parsed.getTime())
-        ? { ok: false, reason: 'Please send a date, for example 2026-08-14.' }
-        : { ok: true, value: parsed.toISOString() };
+      // Never `new Date(raw)`: it reads "03/04/2026" as 4 March regardless of
+      // who typed it, so a customer outside the US silently gets an
+      // appointment a month away.
+      const parsed = parseCustomerDate(raw, { locale, timeZone });
+      if (!parsed) {
+        return {
+          ok: false,
+          reason: 'Sorry, I did not catch that date. Try something like “14 Aug” or “tomorrow”.',
+        };
+      }
+
+      const instant = zonedTimeToUtc(timeZone, {
+        ...parseDateString(parsed.date)!,
+        hour: Math.floor((parsed.minutes ?? 0) / 60),
+        minute: (parsed.minutes ?? 0) % 60,
+      });
+
+      return {
+        ok: true,
+        value: instant.toISOString(),
+        // Read the date back when the day/month order had to be guessed, so a
+        // misreading is caught by the customer rather than at the door.
+        confirm: parsed.ambiguous
+          ? formatInZone(instant, timeZone, locale, {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })
+          : undefined,
+      };
     }
 
     case 'location':

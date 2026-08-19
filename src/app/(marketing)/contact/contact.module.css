@@ -1,0 +1,45 @@
+.cards {
+  display: grid;
+  gap: 16px;
+  margin: 34px 0 24px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.contactCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.contactCard:hover {
+  border-color: var(--brand-action);
+  transform: translateY(-2px);
+}
+
+.contactIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--brand-ink);
+}
+
+.contactTitle {
+  font-size: 17px;
+  font-weight: 650;
+  margin-bottom: 5px;
+}
+
+.contactBody {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.footnote {
+  font-size: 14.5px;
+  color: var(--text-secondary);
+}

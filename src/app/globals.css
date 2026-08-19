@@ -24,6 +24,58 @@
   --status-green-bg: #d1fae5;
   --status-blue: #3b82f6;
   --status-blue-bg: #dbeafe;
+
+  /* ---------------------------------------------------------------------
+     Marketing surface.
+
+     Extends the product palette rather than replacing it: a visitor who
+     signs up should not feel they have landed on a different company's
+     software. --brand-ink is the same deep green as the app sidebar.
+     --------------------------------------------------------------------- */
+  --brand-ink: #0d5c46;
+  --brand-ink-deep: #07130f;
+  --brand-action: #10b981;
+  --brand-action-hover: #059669;
+  --brand-highlight: #f59e0b;
+
+  --surface-warm: #faf9f6;
+  --surface-dark: #07130f;
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: #a7f3d0;
+
+  /* Marketing reads at arm's length; the app reads at a desk. */
+  --font-body-marketing: 17px;
+  --leading-prose: 1.65;
+  --measure: 68ch;
+
+  --space-section: 112px;
+  --space-section-tight: 72px;
+  --content-max: 1200px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --shadow-card: 0 1px 3px rgba(7, 19, 15, 0.06);
+  --shadow-lift: 0 12px 32px rgba(7, 19, 15, 0.12);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+  Accessibility, not an optional polish step: vestibular disorders make
+  scroll-triggered motion genuinely unpleasant. Every marketing animation must
+  be defined so that this rule can switch it off.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 * {
