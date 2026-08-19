@@ -10,5 +10,6 @@
  * Phase 5.
  */
 import '@/server/flow/resume-job';
+import '@/server/demo/reap-job';
 
 export {};
