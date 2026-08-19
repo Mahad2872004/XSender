@@ -1,23 +1,21 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { isAppPath } from '@/lib/routes';
 
 /**
  * Auth gate. Runs before any route renders.
  *
  * Two jobs: refresh the Supabase session (Server Components cannot write
  * cookies, so the refreshed token has to be set here), and bounce signed-out
- * visitors to /login before they reach a page that would query tenant data.
+ * visitors away from the product.
+ *
+ * The gate is an allowlist inverted: everything is public except `/app/**`.
+ * It used to be the other way round, which is why there was no marketing site —
+ * an anonymous visitor could not reach any page at all.
  *
  * Named `proxy`, not `middleware` — the middleware convention is deprecated in
  * Next.js 16. This always runs on the Node runtime.
  */
-
-/** Paths reachable without a session. */
-const PUBLIC_PATHS = ['/login', '/signup', '/auth/callback', '/auth/confirm'];
-
-function isPublic(pathname: string) {
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
-}
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -51,7 +49,7 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (!user && !isPublic(pathname)) {
+  if (!user && isAppPath(pathname)) {
     const login = request.nextUrl.clone();
     login.pathname = '/login';
     // Preserve where they were headed so login can return them there.
@@ -60,10 +58,10 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && (pathname === '/login' || pathname === '/signup')) {
-    const home = request.nextUrl.clone();
-    home.pathname = '/';
-    home.search = '';
-    return NextResponse.redirect(home);
+    const app = request.nextUrl.clone();
+    app.pathname = '/app';
+    app.search = '';
+    return NextResponse.redirect(app);
   }
 
   return response;
@@ -72,12 +70,13 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Everything except Next internals, static assets, and the machine-to-machine
-     * routes that carry their own credential instead of a session: the
-     * Meta/payment webhooks (signature-verified) and the cron queue drain
-     * (shared secret). Leaving those in would redirect the caller to /login and
-     * silently stop webhooks and job processing.
+     * Everything except Next internals, static assets, and routes that carry
+     * their own credential instead of a session: the Meta/payment webhooks
+     * (signature-verified), the cron queue drain (shared secret), and the
+     * public demo (its own httpOnly session cookie). Leaving those in would
+     * redirect the caller to /login and silently stop webhooks and jobs — and
+     * would make every demo message pay for an auth round trip it never uses.
      */
-    '/((?!_next/static|_next/image|api/webhooks|api/jobs|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    '/((?!_next/static|_next/image|api/webhooks|api/jobs|api/demo|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

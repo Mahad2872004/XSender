@@ -20,6 +20,7 @@ import {
   Send,
   MonitorPlay,
 } from 'lucide-react';
+import { APP } from '@/lib/routes';
 import UserMenu, { type SidebarProfile } from './UserMenu';
 import styles from './Sidebar.module.css';
 
@@ -35,44 +36,46 @@ export type { SidebarProfile };
 const NAV_GROUPS = [
   {
     label: null,
-    items: [{ name: 'Dashboard', icon: LayoutDashboard, href: '/' }],
+    items: [{ name: 'Dashboard', icon: LayoutDashboard, href: APP.dashboard }],
   },
   {
     label: 'Conversations',
     items: [
-      { name: 'Inbox', icon: Inbox, href: '/inbox' },
-      { name: 'Contacts', icon: Contact2, href: '/contacts' },
+      { name: 'Inbox', icon: Inbox, href: APP.inbox },
+      { name: 'Contacts', icon: Contact2, href: APP.contacts },
     ],
   },
   {
     label: 'Automation',
     items: [
-      { name: 'Flows', icon: Workflow, href: '/flows' },
-      { name: 'Simulator', icon: MonitorPlay, href: '/simulator' },
-      { name: 'Campaigns', icon: Megaphone, href: '/campaigns' },
-      { name: 'Templates', icon: FileCheck2, href: '/templates' },
+      { name: 'Flows', icon: Workflow, href: APP.flows },
+      { name: 'Simulator', icon: MonitorPlay, href: APP.simulator },
+      { name: 'Campaigns', icon: Megaphone, href: APP.campaigns },
+      { name: 'Templates', icon: FileCheck2, href: APP.templates },
     ],
   },
   {
     label: 'Business',
     items: [
-      { name: 'Menu & Services', icon: UtensilsCrossed, href: '/menu' },
-      { name: 'Orders', icon: ShoppingCart, href: '/orders' },
-      { name: 'Bookings', icon: CalendarClock, href: '/bookings' },
-      { name: 'Payments', icon: Banknote, href: '/payments' },
+      { name: 'Menu & Services', icon: UtensilsCrossed, href: APP.menu },
+      { name: 'Orders', icon: ShoppingCart, href: APP.orders },
+      { name: 'Bookings', icon: CalendarClock, href: APP.bookings },
+      { name: 'Payments', icon: Banknote, href: APP.payments },
     ],
   },
   {
     label: 'Insights',
     items: [
-      { name: 'Reports', icon: BarChart2, href: '/reports' },
-      { name: 'Billing', icon: Receipt, href: '/billing' },
+      { name: 'Reports', icon: BarChart2, href: APP.reports },
+      { name: 'Billing', icon: Receipt, href: APP.billing },
     ],
   },
 ] as const;
 
 function isActive(pathname: string, href: string) {
-  if (href === '/') return pathname === '/';
+  // The dashboard sits at the root of /app, so a prefix match would light it up
+  // on every page underneath it.
+  if (href === APP.dashboard) return pathname === APP.dashboard;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -111,9 +114,9 @@ export default function Sidebar({ profile }: { profile: SidebarProfile }) {
 
       <div className={styles.settings}>
         <Link
-          href="/settings"
+          href={APP.settings}
           className={`${styles.navItem} ${
-            isActive(pathname, '/settings') ? styles.active : ''
+            isActive(pathname, APP.settings) ? styles.active : ''
           }`}
         >
           <Settings className={styles.navIcon} size={20} />

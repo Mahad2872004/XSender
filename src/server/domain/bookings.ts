@@ -6,6 +6,14 @@ import type {
   Json,
   Resource,
 } from '@/lib/database.types';
+import {
+  addDaysToDateString,
+  parseDateString,
+  startOfZonedDay,
+  timeToMinutes,
+  zonedTimeToUtc,
+  zonedWeekday,
+} from '@/lib/timezone';
 import type { WorkspaceContext } from '@/server/db/tenancy';
 
 /**
@@ -38,45 +46,43 @@ export class SlotUnavailableError extends Error {
   }
 }
 
-/** Parse '09:30:00' into minutes past midnight. */
-function timeToMinutes(time: string): number {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + (minutes || 0);
-}
-
-function atMinutes(day: Date, minutes: number): Date {
-  const result = new Date(day);
-  result.setHours(0, 0, 0, 0);
-  result.setMinutes(minutes);
-  return result;
-}
-
 /**
- * Offerable slots for a day.
+ * Offerable slots for a calendar day.
  *
- * `now` is injectable so the caller can test the "don't offer times in the
- * past" rule without waiting for the clock.
+ * `date` is a YYYY-MM-DD **in the workspace's timezone**, not an instant — a
+ * business's opening hours are wall-clock facts about its own day, and taking
+ * a Date here is what let server-local time leak in previously.
+ *
+ * `now` is injectable so the "don't offer times in the past" rule is testable
+ * without waiting for the clock.
  */
 export async function availableSlots(
   ctx: WorkspaceContext,
   options: {
-    date: Date;
+    date: string;
     durationMinutes?: number;
     resourceId?: string;
     partySize?: number;
     now?: Date;
   }
 ): Promise<Slot[]> {
-  const { date, partySize = 1 } = options;
+  const { partySize = 1 } = options;
   const now = options.now ?? new Date();
 
-  const dayStart = new Date(date);
-  dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(dayStart);
-  dayEnd.setDate(dayEnd.getDate() + 1);
+  const timeZone = ctx.workspace.timezone || 'UTC';
+  const isoDate = options.date;
 
-  const weekday = dayStart.getDay();
-  const isoDate = dayStart.toISOString().slice(0, 10);
+  const dayStart = startOfZonedDay(timeZone, isoDate);
+  if (!dayStart) return [];
+
+  const dayEnd = startOfZonedDay(timeZone, addDaysToDateString(isoDate, 1)) ?? dayStart;
+
+  // The weekday an availability_rule refers to is the business's own weekday.
+  // 22:00 UTC on a Friday is already Saturday in Sydney.
+  const weekday = zonedWeekday(timeZone, dayStart);
+
+  const dateParts = parseDateString(isoDate);
+  if (!dateParts) return [];
 
   const [resourcesResult, rulesResult, exceptionsResult, bookingsResult] = await Promise.all([
     ctx.table('resources').select().eq('active', true).limit(200),
@@ -112,8 +118,18 @@ export async function availableSlots(
       const duration = options.durationMinutes ?? rule.slot_minutes;
 
       for (let start = open; start + duration <= close; start += rule.slot_minutes) {
-        const startsAt = atMinutes(dayStart, start);
-        const endsAt = atMinutes(dayStart, start + duration);
+        // Wall-clock minutes on the business's own day, resolved to real
+        // instants through the workspace timezone.
+        const startsAt = zonedTimeToUtc(timeZone, {
+          ...dateParts,
+          hour: Math.floor(start / 60),
+          minute: start % 60,
+        });
+        const endsAt = zonedTimeToUtc(timeZone, {
+          ...dateParts,
+          hour: Math.floor((start + duration) / 60),
+          minute: (start + duration) % 60,
+        });
 
         // Never offer a time that has already passed.
         if (startsAt <= now) continue;
