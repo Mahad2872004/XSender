@@ -28,6 +28,8 @@ import { loadSimulatorState, sendAsCustomer } from '@/server/simulator/service';
 import { seedVerticalData } from '@/server/domain/seed';
 import { loadMenu } from '@/server/domain/catalog';
 import { availableSlots, createBooking, SlotUnavailableError } from '@/server/domain/bookings';
+import { addDaysToDateString, formatInZone, zonedDateString } from '@/lib/timezone';
+import { formatMoney } from '@/lib/money';
 import { latestOrderForContact, listOrders, nextStatus, setOrderStatus } from '@/server/domain/orders';
 import type { Contact, Workspace } from '@/lib/database.types';
 import type { WorkspaceContext } from '@/server/db/tenancy';
@@ -79,11 +81,22 @@ async function createUser(email: string) {
   return data.user;
 }
 
+/**
+ * Deliberately created in a timezone that is almost never the one running the
+ * test. If availability were still computed against server-local time, the
+ * opening-hour assertion below would fail on every machine.
+ */
+const TEST_TIMEZONE = 'America/New_York';
+
 async function createWorkspace(userId: string, name: string): Promise<Workspace> {
   const { data, error } = await supabaseAdmin().rpc('create_workspace', {
     p_user_id: userId,
     p_name: name,
     p_vertical: 'restaurant',
+    p_timezone: TEST_TIMEZONE,
+    p_currency: 'USD',
+    p_locale: 'en-US',
+    p_country: 'US',
   });
   if (error || !data) throw new Error(`Could not create workspace: ${error?.message}`);
   return data as Workspace;
@@ -217,15 +230,26 @@ async function main() {
 
   section('Availability engine');
   {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
+    // A calendar date in the workspace's own timezone, not the server's.
+    const timeZone = ctxA.workspace.timezone || 'UTC';
+    const tomorrow = addDaysToDateString(zonedDateString(timeZone, new Date()), 1);
 
     const slots = await availableSlots(ctxA, { date: tomorrow, partySize: 2 });
     check('slots generated from opening hours', slots.length > 0, `${slots.length} slots`);
     check(
       'no slot is offered in the past',
       slots.every((s) => s.startsAt > new Date())
+    );
+
+    // The seeded restaurant opens at 12:00 local. If the engine were still
+    // using server-local time this would read 12:00 only by coincidence.
+    const firstLocalHour = Number(
+      formatInZone(slots[0].startsAt, timeZone, 'en-GB', { hour: '2-digit', hour12: false })
+    );
+    check(
+      'first slot is at the local opening hour, whatever the server timezone',
+      firstLocalHour === 12,
+      `opens at ${firstLocalHour}:00 local (server TZ ${Intl.DateTimeFormat().resolvedOptions().timeZone})`
     );
 
     // A party of six must not be offered a table for four.
@@ -302,7 +326,14 @@ async function main() {
   state = await loadSimulatorState(ctxA);
   const vars = (state.run?.variables ?? {}) as Record<string, unknown>;
   check('item added to the cart', Array.isArray(vars.cart) && (vars.cart as unknown[]).length === 1);
-  check('cart total priced from the catalog', vars.cart_total === 'Rs. 750', String(vars.cart_total));
+  // Compared against the formatter rather than a hardcoded string, so the
+  // assertion holds whatever currency and locale the workspace uses.
+  const expectedCartTotal = formatMoney(75000, ctxA.workspace.currency, ctxA.workspace.locale);
+  check(
+    'cart total priced from the catalog',
+    vars.cart_total === expectedCartTotal,
+    `${vars.cart_total} vs ${expectedCartTotal}`
+  );
 
   await say({ type: 'reply', replyId: 'checkout', title: 'Checkout' }, 'checks out');
   await say({ type: 'reply', replyId: 'delivery', title: 'Delivery' }, 'chooses Delivery');

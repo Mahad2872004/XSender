@@ -1,0 +1,124 @@
+.finalStep {
+  margin-top: 34px;
+  padding: 28px;
+  background: var(--surface-warm);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--brand-action);
+  border-radius: var(--radius-md);
+  max-width: var(--measure);
+}
+
+.tierGrid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: start;
+}
+
+.tier,
+.tierFeatured {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 30px 26px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  height: 100%;
+}
+
+.tierFeatured {
+  border-color: var(--brand-action);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12), var(--shadow-lift);
+}
+
+.tierName {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tierPrice {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tierSummary {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tierList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 22px;
+}
+
+.tierItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tierCheck {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--brand-action);
+}
+
+.tierCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: auto;
+  border-radius: var(--radius-sm);
+  background: var(--brand-ink);
+  color: #fff;
+  font-size: 15.5px;
+  font-weight: 650;
+  transition: background 0.15s ease;
+}
+
+.tierCta:hover {
+  background: var(--brand-ink-deep);
+}
+
+.guarantee {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 34px;
+  padding: 24px 26px;
+  background: var(--card-bg);
+  border: 1px solid var(--brand-action);
+  border-radius: var(--radius-md);
+}
+
+.guaranteeIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--brand-action);
+}
+
+.guaranteeTitle {
+  font-size: 17px;
+  font-weight: 650;
+  margin-bottom: 6px;
+}
+
+.guaranteeBody {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: var(--measure);
+}

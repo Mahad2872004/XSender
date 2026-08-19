@@ -1,0 +1,53 @@
+.updated {
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 16.5px;
+  line-height: 1.72;
+  color: var(--text-secondary);
+  max-width: var(--measure);
+}
+
+.prose h2 {
+  margin-top: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.prose strong {
+  color: var(--text-primary);
+}
+
+.prose ul {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-left: 22px;
+}
+
+.prose li {
+  list-style: disc;
+}
+
+.prose a {
+  color: var(--brand-ink);
+  text-decoration: underline;
+}
+
+/* Marks text that is honest about being provisional rather than pretending
+   to be a finished legal document. */
+.callout {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--status-yellow-bg);
+  color: #92400e;
+  font-size: 15px;
+}
