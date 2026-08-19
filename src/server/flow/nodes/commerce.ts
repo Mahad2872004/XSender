@@ -144,7 +144,7 @@ export const catalogBrowseNode: NodeDefinition<typeof CatalogBrowseConfigSchema>
 
     const subtotal = cartSubtotalMinor(cart);
     runtime.setVariable('cart_total_minor', subtotal);
-    runtime.setVariable('cart_total', formatMoney(subtotal, runtime.ctx.workspace.currency));
+    runtime.setVariable('cart_total', formatMoney(subtotal, runtime.ctx.workspace.currency, runtime.ctx.workspace.locale));
 
     runtime.note({ addedItem: item.name, cartSize: cart.length });
 
@@ -161,11 +161,11 @@ async function askForItem(
   const group = groups.find((g) => g.category.id === categoryId);
   const items = (group?.items ?? []).slice(0, 10);
 
-  const currency = runtime.ctx.workspace.currency;
+  const { currency, locale } = runtime.ctx.workspace;
   const rows = items.map((item) => ({
     id: item.id,
     title: item.name.slice(0, 24),
-    description: formatMoney(item.price_minor, currency).slice(0, 72),
+    description: formatMoney(item.price_minor, currency, locale).slice(0, 72),
   }));
 
   runtime.send({
@@ -215,15 +215,15 @@ export const cartReviewNode: NodeDefinition<typeof CartReviewConfigSchema> = {
       return { kind: 'advance', handle: 'add_more' };
     }
 
-    const currency = runtime.ctx.workspace.currency;
+    const { currency, locale } = runtime.ctx.workspace;
     const lines = cart
-      .map((line) => `• ${line.quantity} × ${line.name} — ${formatMoney(line.unitPriceMinor * line.quantity, currency)}`)
+      .map((line) => `• ${line.quantity} × ${line.name} — ${formatMoney(line.unitPriceMinor * line.quantity, currency, locale)}`)
       .join('\n');
     const subtotal = cartSubtotalMinor(cart);
 
     runtime.send({
       type: 'buttons',
-      text: `${renderTemplate(config.prompt, runtime.variables)}\n\n${lines}\n\nTotal: ${formatMoney(subtotal, currency)}`,
+      text: `${renderTemplate(config.prompt, runtime.variables)}\n\n${lines}\n\nTotal: ${formatMoney(subtotal, currency, locale)}`,
       buttons: [
         { id: 'add_more', title: config.addMoreLabel },
         { id: 'checkout', title: config.checkoutLabel },
@@ -299,10 +299,10 @@ export const createOrderNode: NodeDefinition<typeof CreateOrderConfigSchema> = {
         placedBy: 'flow',
       });
 
-      const currency = runtime.ctx.workspace.currency;
+      const { currency, locale } = runtime.ctx.workspace;
       runtime.setVariable(config.saveAs, order.code);
       runtime.setVariable('order_id', order.id);
-      runtime.setVariable('order_total', formatMoney(order.total_minor, currency));
+      runtime.setVariable('order_total', formatMoney(order.total_minor, currency, locale));
       // The cart has become an order; leaving it would let a later node
       // double-charge for the same items.
       runtime.setVariable(CART_VARIABLE, []);
@@ -358,7 +358,7 @@ export const orderStatusNode: NodeDefinition<typeof OrderStatusConfigSchema> = {
       return { kind: 'advance', handle: 'not_found' };
     }
 
-    const currency = runtime.ctx.workspace.currency;
+    const { currency, locale } = runtime.ctx.workspace;
     const items = order.items
       .map((item) => `• ${item.quantity} × ${item.name}`)
       .join('\n');
@@ -368,7 +368,7 @@ export const orderStatusNode: NodeDefinition<typeof OrderStatusConfigSchema> = {
 
     runtime.send({
       type: 'text',
-      text: `Order ${order.code}\nStatus: ${ORDER_STATUS_LABEL[order.status]}\n\n${items}\n\nTotal: ${formatMoney(order.total_minor, currency)}`,
+      text: `Order ${order.code}\nStatus: ${ORDER_STATUS_LABEL[order.status]}\n\n${items}\n\nTotal: ${formatMoney(order.total_minor, currency, locale)}`,
     });
 
     runtime.note({ orderCode: order.code, status: order.status });

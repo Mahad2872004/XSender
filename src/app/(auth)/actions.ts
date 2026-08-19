@@ -7,6 +7,7 @@ import { supabaseSession, currentUser } from '@/server/db/session-client';
 import { supabaseAdmin } from '@/server/db/admin';
 import { listWorkspacesForUser } from '@/server/db/tenancy';
 import { ACTIVE_WORKSPACE_COOKIE } from '@/server/auth/session';
+import { APP, PUBLIC, isAppPath } from '@/lib/routes';
 import type { BusinessVertical } from '@/lib/database.types';
 import type { AuthFormState } from './form-state';
 
@@ -52,12 +53,15 @@ export async function signIn(
   if (error) return { error: error.message };
 
   const memberships = await listWorkspacesForUser(data.user.id);
-  if (memberships.length === 0) redirect('/onboarding');
+  if (memberships.length === 0) redirect(PUBLIC.onboarding);
 
   await setActiveWorkspace(memberships[0].workspace.id);
 
+  // Only ever return them inside the product. A bare "starts with /" check
+  // would also accept "//evil.com", which browsers read as a protocol-relative
+  // absolute URL — an open redirect.
   const next = formData.get('next');
-  redirect(typeof next === 'string' && next.startsWith('/') ? next : '/');
+  redirect(typeof next === 'string' && isAppPath(next) ? next : APP.dashboard);
 }
 
 export async function signUp(
@@ -95,7 +99,7 @@ export async function signUp(
   const created = await createWorkspaceFor(data.user.id, businessName);
   if (!created.ok) return { error: created.error };
 
-  redirect('/');
+  redirect(APP.dashboard);
 }
 
 type WorkspaceResult = { ok: true; workspaceId: string } | { ok: false; error: string };
@@ -129,7 +133,7 @@ export async function createFirstWorkspace(
   formData: FormData
 ): Promise<AuthFormState> {
   const user = await currentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect(PUBLIC.login);
 
   const parsed = z
     .object({
@@ -150,7 +154,7 @@ export async function createFirstWorkspace(
   );
   if (!created.ok) return { error: created.error };
 
-  redirect('/');
+  redirect(APP.dashboard);
 }
 
 export async function signOut() {
@@ -160,13 +164,15 @@ export async function signOut() {
   const cookieStore = await cookies();
   cookieStore.delete(ACTIVE_WORKSPACE_COOKIE);
 
-  redirect('/login');
+  // Out to the marketing site rather than the login form — signing out is not
+  // usually a prelude to signing straight back in.
+  redirect(PUBLIC.home);
 }
 
 /** Workspace switcher. Verifies membership before trusting the id. */
 export async function switchWorkspace(workspaceId: string) {
   const user = await currentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect(PUBLIC.login);
 
   const memberships = await listWorkspacesForUser(user.id);
   if (!memberships.some((m) => m.workspace.id === workspaceId)) {
@@ -174,5 +180,5 @@ export async function switchWorkspace(workspaceId: string) {
   }
 
   await setActiveWorkspace(workspaceId);
-  redirect('/');
+  redirect(APP.dashboard);
 }

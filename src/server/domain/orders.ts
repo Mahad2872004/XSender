@@ -164,8 +164,12 @@ export function nextStatus(order: Order): OrderStatus | null {
  * This is the automation the business is paying for — nobody types these.
  * Returning null means the status change is internal and needs no message.
  */
-export function statusMessage(order: Order, status: OrderStatus): string | null {
-  const total = formatMoney(order.total_minor, order.currency);
+export function statusMessage(
+  order: Order,
+  status: OrderStatus,
+  locale = 'en-US'
+): string | null {
+  const total = formatMoney(order.total_minor, order.currency, locale);
 
   switch (status) {
     case 'confirmed':

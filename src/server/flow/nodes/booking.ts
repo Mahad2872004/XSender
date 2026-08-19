@@ -1,4 +1,10 @@
 import { BookingSlotsConfigSchema, CreateBookingConfigSchema } from '@/lib/schemas/flow';
+import {
+  addDaysToDateString,
+  formatInZone,
+  startOfZonedDay,
+  zonedDateString,
+} from '@/lib/timezone';
 import { matchNumberedChoice } from '@/server/channels/types';
 import {
   availableSlots,
@@ -30,21 +36,20 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
   description: 'Show the days and times you actually have free, and take a pick.',
 
   async enter(config, runtime) {
-    const days = nextDays(config.daysAhead);
+    const { timezone, locale } = workspaceFormatting(runtime);
+    // "Today" is the business's today, not the server's.
+    const days = nextDays(config.daysAhead, timezone);
+
+    const rows = days.map((day) => ({
+      id: day,
+      title: formatDay(day, timezone, locale),
+    }));
 
     runtime.send({
       type: 'list',
       text: renderTemplate(config.datePrompt, runtime.variables),
       buttonLabel: 'See days',
-      sections: [
-        {
-          title: 'Available days',
-          rows: days.map((day) => ({
-            id: day.toISOString().slice(0, 10),
-            title: formatDay(day),
-          })),
-        },
-      ],
+      sections: [{ title: 'Available days', rows }],
     });
 
     return {
@@ -52,16 +57,15 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
       awaiting: {
         nodeId: '',
         kind: 'booking_date',
-        options: days.map((day) => ({
-          id: day.toISOString().slice(0, 10),
-          title: formatDay(day),
-        })),
+        options: rows,
         attempts: 0,
       },
     };
   },
 
   async resume(config, runtime, input, awaiting) {
+    const { timezone, locale } = workspaceFormatting(runtime);
+
     const raw =
       input.payload.type === 'reply'
         ? input.payload.replyId
@@ -84,7 +88,8 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
 
       const slots = summariseSlots(
         await availableSlots(runtime.ctx, {
-          date: new Date(`${dateId}T00:00:00`),
+          // A calendar date in the business's own timezone.
+          date: dateId,
           durationMinutes: config.durationMinutes,
           partySize,
         })
@@ -99,7 +104,7 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
 
       const rows = slots.map((slot) => ({
         id: slotId(slot),
-        title: formatTime(slot.startsAt),
+        title: formatTime(slot.startsAt, timezone, locale),
         description: slot.resourceName.slice(0, 72),
       }));
 
@@ -107,7 +112,7 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
         type: 'list',
         text: renderTemplate(config.slotPrompt, runtime.variables),
         buttonLabel: 'See times',
-        sections: [{ title: formatDay(new Date(`${dateId}T00:00:00`)), rows }],
+        sections: [{ title: formatDay(dateId, timezone, locale), rows }],
       });
 
       return {
@@ -135,7 +140,10 @@ export const bookingSlotsNode: NodeDefinition<typeof BookingSlotsConfigSchema> =
 
     // Handed to create_booking, which is what actually claims it.
     runtime.setVariable(SELECTED_SLOT, parsed);
-    runtime.setVariable('booking_time', formatDateTime(new Date(parsed.startsAt)));
+    runtime.setVariable(
+      'booking_time',
+      formatDateTime(new Date(parsed.startsAt), timezone, locale)
+    );
 
     runtime.note({ slot: parsed.startsAt, resourceId: parsed.resourceId });
     return { kind: 'advance', handle: 'next' };
@@ -217,18 +225,22 @@ function retry(
   return { kind: 'await' as const, awaiting: { ...awaiting, attempts } };
 }
 
-function nextDays(count: number): Date[] {
-  const days: Date[] = [];
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
+/** Timezone and locale for whichever business this conversation belongs to. */
+function workspaceFormatting(runtime: { ctx: { workspace: { timezone: string; locale: string } } }) {
+  return {
+    timezone: runtime.ctx.workspace.timezone || 'UTC',
+    locale: runtime.ctx.workspace.locale || 'en-GB',
+  };
+}
+
+/** Calendar dates (YYYY-MM-DD) starting from the business's own today. */
+function nextDays(count: number, timeZone: string): string[] {
+  const today = zonedDateString(timeZone, new Date());
 
   // WhatsApp lists cap at 10 rows.
-  for (let i = 0; i < Math.min(count, 10); i++) {
-    const day = new Date(start);
-    day.setDate(day.getDate() + i);
-    days.push(day);
-  }
-  return days;
+  return Array.from({ length: Math.min(count, 10) }, (_, i) =>
+    addDaysToDateString(today, i)
+  );
 }
 
 /** Slot identity travels through the customer's reply, so it must round-trip. */
@@ -244,20 +256,27 @@ function parseSlotId(
   return { startsAt, endsAt, resourceId };
 }
 
-function formatDay(day: Date): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diff = Math.round((day.getTime() - today.getTime()) / 86_400_000);
+/** "Today" / "Tomorrow" / "Fri 14 Aug", relative to the business's own date. */
+function formatDay(date: string, timeZone: string, locale: string): string {
+  const today = zonedDateString(timeZone, new Date());
+  if (date === today) return 'Today';
+  if (date === addDaysToDateString(today, 1)) return 'Tomorrow';
 
-  if (diff === 0) return 'Today';
-  if (diff === 1) return 'Tomorrow';
-  return day.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+  const instant = startOfZonedDay(timeZone, date);
+  if (!instant) return date;
+
+  return formatInZone(instant, timeZone, locale, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
 }
 
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+function formatTime(instant: Date, timeZone: string, locale: string): string {
+  return formatInZone(instant, timeZone, locale, { hour: '2-digit', minute: '2-digit' });
 }
 
-function formatDateTime(date: Date): string {
-  return `${formatDay(date)} at ${formatTime(date)}`;
+function formatDateTime(instant: Date, timeZone: string, locale: string): string {
+  const date = zonedDateString(timeZone, instant);
+  return `${formatDay(date, timeZone, locale)} at ${formatTime(instant, timeZone, locale)}`;
 }

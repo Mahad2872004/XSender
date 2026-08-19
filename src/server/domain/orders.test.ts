@@ -107,8 +107,15 @@ describe('statusMessage', () => {
     expect(statusMessage(order(), 'preparing')).toContain('XS-1042');
   });
 
-  it('includes the total on confirmation', () => {
-    expect(statusMessage(order(), 'confirmed')).toContain('Rs. 750');
+  it('includes the total on confirmation, in the workspace locale', () => {
+    // Intl separates the symbol from the number with a non-breaking space
+    // (U+00A0), so a naive substring match on a normal space silently fails.
+    const normalise = (text: string | null) => (text ?? '').replace(/\s/g, ' ');
+
+    expect(normalise(statusMessage(order(), 'confirmed', 'en-PK'))).toContain('Rs 750');
+    // Same amount and currency, different locale — the glyph may change, the
+    // number must not.
+    expect(normalise(statusMessage(order(), 'confirmed', 'en-US'))).toContain('750');
   });
 
   it('words "ready" differently for pickup', () => {
