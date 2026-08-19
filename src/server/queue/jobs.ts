@@ -19,7 +19,9 @@ export type JobType =
   | 'booking.remind'
   | 'cart.abandoned'
   | 'contact.winback'
-  | 'campaign.dispatch';
+  | 'campaign.dispatch'
+  // Housekeeping for the public demo's throwaway conversations.
+  | 'demo.reap';
 
 export interface EnqueueOptions {
   type: JobType;
