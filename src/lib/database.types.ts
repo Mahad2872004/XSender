@@ -12,7 +12,11 @@
 export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
 export type WorkspaceRole = 'owner' | 'admin' | 'agent' | 'viewer';
-export type BusinessVertical = 'restaurant' | 'clinic' | 'real_estate' | 'ecommerce' | 'other';
+/**
+ * Free text, not an enum: the canonical list lives in src/lib/verticals.ts so
+ * adding an industry is shipping a template rather than writing a migration.
+ */
+export type BusinessVertical = string;
 export type ChannelType = 'whatsapp' | 'instagram' | 'messenger' | 'simulator';
 export type ChannelStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 export type ConversationStatus = 'open' | 'pending' | 'resolved';
@@ -37,6 +41,10 @@ export type Workspace = {
   vertical: BusinessVertical;
   timezone: string;
   currency: string;
+  /** BCP 47, e.g. en-GB. Drives date parsing, formatting and the bot's phrases. */
+  locale: string;
+  /** ISO 3166-1 alpha-2. Null until known. Drives regional pricing. */
+  country_code: string | null;
   settings: Json;
   onboarded_at: string | null;
   /** Backs next_order_code()/next_booking_code(); never set directly. */
@@ -378,6 +386,19 @@ export type Booking = {
   updated_at: string;
 };
 
+/** An anonymous visitor's throwaway conversation on the public demo. */
+export type DemoSession = {
+  id: string;
+  token: string;
+  workspace_id: string;
+  contact_id: string;
+  conversation_id: string;
+  ip_hash: string | null;
+  message_count: number;
+  created_at: string;
+  last_message_at: string;
+};
+
 export type WebhookDelivery = {
   id: number;
   source: string;
@@ -422,7 +443,12 @@ export type Database = {
       profiles: TableOf<Profile>;
       workspaces: TableOf<
         Workspace,
-        'vertical' | 'timezone' | 'currency' | 'settings' | 'order_counter'
+        | 'vertical'
+        | 'timezone'
+        | 'currency'
+        | 'locale'
+        | 'settings'
+        | 'order_counter'
       >;
       workspace_members: TableOf<WorkspaceMember, 'role'>;
       channels: TableOf<Channel, 'status'>;
@@ -467,6 +493,7 @@ export type Database = {
       availability_rules: TableOf<AvailabilityRule, 'slot_minutes'>;
       availability_exceptions: TableOf<AvailabilityException, 'closed'>;
       bookings: TableOf<Booking, 'status' | 'placed_by'>;
+      demo_sessions: TableOf<DemoSession, 'message_count' | 'last_message_at'>;
     };
     Views: Record<never, never>;
     Functions: {
@@ -474,9 +501,11 @@ export type Database = {
         Args: {
           p_user_id: string;
           p_name: string;
-          p_vertical?: BusinessVertical;
+          p_vertical?: string;
           p_timezone?: string;
           p_currency?: string;
+          p_locale?: string;
+          p_country?: string | null;
         };
         Returns: Workspace;
       };
@@ -484,6 +513,7 @@ export type Database = {
         Args: { worker_id: string; batch_size?: number };
         Returns: Job[];
       };
+      reap_demo_sessions: { Args: { older_than?: string }; Returns: number };
       reap_stalled_jobs: {
         Args: { stall_after?: string };
         Returns: number;
@@ -496,7 +526,6 @@ export type Database = {
     };
     Enums: {
       workspace_role: WorkspaceRole;
-      business_vertical: BusinessVertical;
       channel_type: ChannelType;
       channel_status: ChannelStatus;
       conversation_status: ConversationStatus;

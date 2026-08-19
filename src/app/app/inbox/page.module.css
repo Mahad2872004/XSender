@@ -1,0 +1,605 @@
+.inboxContainer {
+  display: flex;
+  gap: 24px;
+  height: calc(100vh - 120px);
+  min-height: 600px;
+}
+
+.leftPanel {
+  width: 340px;
+  background-color: var(--bg-color); /* The left panel doesn't look like a single card, but a list of cards? No, it looks like a single transparent column with search and cards inside */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.searchWrapper {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  font-size: 14px;
+  outline: none;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+}
+
+.filterPill {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filterPill.active {
+  background-color: var(--accent-green);
+  color: white;
+}
+
+.convList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* hide scrollbar for clean look */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.convList::-webkit-scrollbar {
+  display: none;
+}
+
+.convCard {
+  padding: 16px;
+  border-radius: 12px;
+  background-color: var(--bg-color);
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.convCard:hover {
+  background-color: var(--card-bg);
+}
+
+.convCard.active {
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.convCard.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--accent-green);
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.onlineIndicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--status-green);
+  border: 2px solid white;
+}
+
+.convInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.convHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.convName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.convTime {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.convPreview {
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.tags {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #d1fae5;
+  color: var(--status-green);
+}
+
+.tagSales {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.unreadBadge {
+  background-color: var(--status-green);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+/* Middle Panel */
+.middlePanel {
+  flex: 1;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.chatHeader {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chatUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatUserInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.chatUserName {
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.verified {
+  color: var(--status-green);
+}
+
+.chatUserPhone {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.chatActions {
+  display: flex;
+  gap: 12px;
+}
+
+.assignBtn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.resolveBtn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: var(--accent-green);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chatHistory {
+  flex: 1;
+  background-color: #f8fafc;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dateDivider {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.dateText {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background-color: #e2e8f0;
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+.messageRow.incoming {
+  align-self: flex-start;
+}
+
+.messageRow.outgoing {
+  align-self: flex-end;
+}
+
+.bubble {
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.incoming .bubble {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-bottom-left-radius: 4px;
+}
+
+.outgoing .bubble {
+  background-color: #22c55e;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.msgTime {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.outgoing .msgTime {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.chatInput {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inputField {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14px;
+  outline: none;
+}
+
+.inputField::placeholder {
+  color: var(--text-secondary);
+}
+
+.iconBtn {
+  color: var(--text-secondary);
+}
+
+.sendBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Right Panel */
+.rightPanel {
+  width: 300px;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.profileHero {
+  padding: 32px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.heroAvatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  object-fit: cover;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.heroName {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.heroPhone {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.heroTags {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.heroTag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  text-transform: uppercase;
+}
+
+.heroTag.vip {
+  background-color: #d1fae5;
+  color: var(--status-green);
+}
+
+.addTagBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  margin-top: 16px;
+}
+
+.tab {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  position: relative;
+}
+
+.tab.active {
+  color: var(--text-primary);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--accent-green);
+}
+
+.detailsContent {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detailGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detailLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.detailValue {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.managerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.managerAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--status-green);
+  color: white;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.orderCard {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.orderId {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.orderStatus {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--status-green);
+  background-color: #d1fae5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.orderDesc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.activityItem {
+  display: flex;
+  gap: 12px;
+}
+
+.activityIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--status-green);
+  flex-shrink: 0;
+}
+
+.activityIcon.call {
+  color: #0ea5e9;
+  background-color: #e0f2fe;
+}
+
+.activityInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityTitle {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.activityTime {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
