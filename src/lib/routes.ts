@@ -13,6 +13,7 @@ export const APP = {
   dashboard: '/app',
   inbox: '/app/inbox',
   contacts: '/app/contacts',
+  channels: '/app/channels',
   flows: '/app/flows',
   flow: (flowId: string) => `/app/flows/${flowId}`,
   simulator: '/app/simulator',
@@ -25,6 +26,7 @@ export const APP = {
   reports: '/app/reports',
   billing: '/app/billing',
   settings: '/app/settings',
+  setup: '/app/setup',
   welcome: '/app/welcome',
 } as const;
 

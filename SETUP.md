@@ -49,8 +49,11 @@ npx supabase db push \
   --include-all
 ```
 
-Verify with `npx supabase migration list --db-url "..."` — all seven migrations
-should show a remote version.
+Verify with `npx supabase migration list --db-url "..."` — every migration in
+`supabase/migrations/` should show a remote version.
+
+If the `...pooler.supabase.com` host rejects the tenant, use the direct
+`db.<PROJECT_REF>.supabase.co` host instead; some projects have no pooler.
 
 ## 4. Run it
 
@@ -120,8 +123,27 @@ the engine entered and which branch it took.
 - **Tenancy**: server code uses the service-role key, which bypasses RLS.
   Isolation is enforced in `src/server/db/tenancy.ts` — always go through
   `ctx.table(...)`, never `supabaseAdmin()` directly in feature code.
-- **Migrations** are numbered `0001`–`0010`. Add new ones with the next number;
-  never edit an applied migration.
+- **Migrations** are numbered sequentially from `0001`. Add new ones with the
+  next number; never edit an applied migration.
 - **Machine-to-machine routes** (`/api/webhooks`, `/api/jobs`) are excluded from
   the matcher in `src/proxy.ts` and carry their own credential. Anything added
   under those paths is unauthenticated by default — check the secret yourself.
+- **The ROI figure is a product claim**, so its arithmetic is verified against
+  the live database rather than trusted: `npm run roi:check` plays a known
+  conversation through and asserts every number the dashboard shows. Run it
+  after touching `roi_summary`, `roi_daily`, or `src/server/roi/summary.ts`.
+
+## Connecting a WhatsApp number
+
+Needs `META_APP_SECRET` and `META_WEBHOOK_VERIFY_TOKEN` set (see `.env.example`),
+then, in the app, **Channels** → paste the phone number ID and a permanent access
+token from the client's Meta dashboard. The token is verified against the Graph
+API before anything is saved, and encrypted with `ENCRYPTION_KEY` at rest.
+
+In the Meta dashboard, set the webhook callback URL to
+`<your origin>/api/webhooks/meta` and subscribe to the `messages` field. The
+**Go-live checklist** screen turns that step green the first time Meta sends a
+correctly signed payload, which is the only proof that it works.
+
+Instagram and Messenger adapters are intentionally unregistered — see the note in
+`src/server/channels/registry.ts`.
