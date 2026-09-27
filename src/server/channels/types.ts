@@ -54,6 +54,24 @@ export class ChannelSendError extends Error {
   }
 }
 
+/**
+ * A delivery receipt from the platform, matched back to a sent message by its
+ * `externalId`. The simulator has no such concept; WhatsApp reports every
+ * message twice over (sent, then delivered, then read).
+ */
+export interface InboundStatus {
+  externalId: string;
+  status: 'sent' | 'delivered' | 'read' | 'failed';
+  timestamp: Date;
+  error?: string;
+}
+
+/** What a webhook payload turned out to contain. */
+export interface NormalizedWebhook {
+  messages: InboundMessage[];
+  statuses: InboundStatus[];
+}
+
 export interface ChannelAdapter {
   readonly type: ChannelType;
   readonly capabilities: ChannelCapabilities;
@@ -64,6 +82,14 @@ export interface ChannelAdapter {
    * a permanent failure (invalid token, blocked user) just burns quota.
    */
   send(channel: Channel, recipientExternalId: string, payload: OutboundPayload): Promise<SendResult>;
+
+  /**
+   * Turn a raw webhook body into the engine's own shape.
+   *
+   * Optional because a channel need not be webhook-driven — the simulator is
+   * driven from inside the app and has nothing to normalise.
+   */
+  normalizeWebhook?(body: unknown): NormalizedWebhook;
 }
 
 /**

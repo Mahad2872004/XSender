@@ -1,17 +1,669 @@
-.dashboard {
+/* ===========================================================================
+   ROI dashboard.
+
+   One number dominates. The hero is a dark slab so the hours figure reads as a
+   statement rather than a metric in a grid, and every card below it is
+   deliberately quieter — proof supporting the claim, not competing with it.
+   =========================================================================== */
+
+.page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
+  padding-top: 8px;
+  max-width: 1160px;
+}
+
+/* ---------- Top row ---------- */
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.pageSub {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.periods {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.periodTab {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.periodTab:hover {
+  color: var(--text-primary);
+}
+
+.periodTabOn {
+  background: var(--card-bg);
+  color: var(--sidebar-bg);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.reportBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  min-height: 36px;
+  border-radius: 9px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.reportBtn:hover {
+  border-color: var(--accent-green);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
   position: relative;
-  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 28px;
+  padding: 34px 34px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0d5c46 0%, #07382b 62%, #062b21 100%);
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(7, 56, 43, 0.28);
 }
 
-.middleRow {
-  display: flex;
-  gap: 24px;
+/* A faint glow behind the number, so the eye lands there first. */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: -60px;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.28) 0%, transparent 68%);
+  pointer-events: none;
 }
 
-.bottomRow {
+.heroMain {
+  position: relative;
+  padding-bottom: 26px;
+}
+
+.heroLabel {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #6ee7b7;
+  margin-bottom: 10px;
+}
+
+/* The whole screen exists for this line. */
+.heroNumber {
   display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: clamp(56px, 9vw, 104px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.heroUnit {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #a7f3d0;
+}
+
+.heroCaption {
+  margin-top: 14px;
+  max-width: 44ch;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.heroCaption strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.heroAside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0 26px;
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 15px;
+  border-left: 2px solid rgba(110, 231, 183, 0.35);
+}
+
+.heroStatLabel {
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #6ee7b7;
+}
+
+.heroStatValue {
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.heroStatNote {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* The assumption sits on the hero itself. Out of sight, the big number would
+   read as a claim; in plain view, it reads as a calculation. */
+.assumption {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin: 0 -34px;
+  padding: 13px 34px;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.assumption strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.assumptionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.assumptionBtn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ---------- Assumption editor ---------- */
+
+.tuneForm {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 -34px;
+  padding: 18px 34px;
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.tuneField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tuneLabel {
+  font-size: 11.5px;
+  font-weight: 650;
+  color: #a7f3d0;
+}
+
+.tuneInput {
+  width: 140px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tuneInput:focus {
+  outline: none;
+  border-color: var(--accent-green);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.tuneSave,
+.tuneCancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 15px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.tuneSave {
+  background: var(--accent-green);
+  color: #04231a;
+}
+
+.tuneSave:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.tuneCancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tuneError {
+  flex-basis: 100%;
+  font-size: 12.5px;
+  color: #fecaca;
+}
+
+/* ---------- Proof cards ---------- */
+
+.proofGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
+  gap: 14px;
+}
+
+.proofCard {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 17px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.proofIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 7px;
+  border-radius: 9px;
+  background: var(--status-green-bg);
+  color: #047857;
+}
+
+.proofValue {
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.proofLabel {
+  font-size: 13px;
+  font-weight: 620;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.proofNote {
+  margin-top: 2px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* ---------- Chart ---------- */
+
+.chartCard {
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.chartHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.chartTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.swatchBot,
+.swatchPerson {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.swatchBot { background: var(--sidebar-bg); }
+.swatchPerson { background: var(--status-yellow); }
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 152px;
+}
+
+.chartCol {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chartStack {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1px;
+}
+
+.barBot,
+.barPerson {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 3px;
+}
+
+.barBot { background: var(--sidebar-bg); }
+.barPerson { background: var(--status-yellow); }
+
+/* A day with nothing on it still gets a mark — a quiet Sunday is information,
+   and collapsing it would make the week look busier than it was. */
+.barEmpty {
+  width: 100%;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--border-color);
+}
+
+.chartAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ---------- The arithmetic ---------- */
+
+.workings {
+  padding: 22px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.workingsTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.workingsIntro {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 68ch;
+  margin-bottom: 16px;
+}
+
+.workingsList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.workingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 24px;
+  padding: 13px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.workingRowTotal {
+  border-top: 2px solid var(--text-primary);
+  margin-top: 4px;
+}
+
+.workingText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.workingStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  font-weight: 620;
+  color: var(--text-primary);
+}
+
+.assumedTag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--status-yellow-bg);
+  color: #92400e;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.workingNote {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 76ch;
+}
+
+.workingValue {
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.workingRowTotal .workingValue {
+  font-size: 19px;
+}
+
+.workingsFoot {
+  margin-top: 16px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+/* ---------- Empty state ---------- */
+
+.emptyHero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 44px 34px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0d5c46 0%, #07382b 100%);
+  color: #fff;
+}
+
+.emptyIcon {
+  color: #6ee7b7;
+  margin-bottom: 6px;
+}
+
+.emptyTitle {
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.emptyBody {
+  max-width: 64ch;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.emptyActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.emptyPrimary,
+.emptySecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 17px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 650;
+}
+
+.emptyPrimary {
+  background: var(--accent-green);
+  color: #04231a;
+}
+
+.emptyPrimary:hover {
+  background: #34d399;
+}
+
+.emptySecondary {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.emptySecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---------- Narrow ---------- */
+
+@media (max-width: 880px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 26px 22px 0;
+  }
+  .heroMain {
+    padding-bottom: 0;
+  }
+  .heroAside {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 22px;
+  }
+  .assumption,
+  .tuneForm {
+    margin: 0 -22px;
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .assumptionBtn {
+    margin-left: 0;
+  }
+  .workingRow {
+    flex-direction: column;
+    gap: 6px;
+  }
 }

@@ -1,15 +1,20 @@
 import type { ChannelType } from '@/lib/database.types';
 import type { ChannelAdapter } from './types';
 import { simulatorAdapter } from './simulator';
+import { whatsappAdapter } from './whatsapp';
 
 /**
  * Channel type → adapter.
  *
- * WhatsApp, Instagram, and Messenger register here in Phase 4. Until then the
- * simulator is the only one, and everything upstream of this map already works
- * the way it will once the real channels land.
+ * Instagram and Messenger are deliberately absent. The interface supports them
+ * and the work is mostly wiring, but they stay unregistered until WhatsApp has
+ * real, retained pilot clients — connecting three channels at once only delays
+ * the first real conversation.
  */
-const adapters = new Map<ChannelType, ChannelAdapter>([['simulator', simulatorAdapter]]);
+const adapters = new Map<ChannelType, ChannelAdapter>([
+  ['simulator', simulatorAdapter],
+  ['whatsapp', whatsappAdapter],
+]);
 
 export function registerAdapter(adapter: ChannelAdapter): void {
   adapters.set(adapter.type, adapter);
