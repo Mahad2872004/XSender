@@ -19,7 +19,10 @@ import {
   tapSimulatedReply,
 } from './actions';
 import { EMPTY_SIMULATOR_STATE } from './form-state';
-import RunInspector, { type InspectorRun, type InspectorStep } from './RunInspector';
+import RunInspector, {
+  type InspectorRun,
+  type InspectorStep,
+} from '@/components/RunInspector/RunInspector';
 import styles from './simulator.module.css';
 
 export type SimulatorMessage = {

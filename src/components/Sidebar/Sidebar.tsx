@@ -19,6 +19,8 @@ import {
   Settings,
   Send,
   MonitorPlay,
+  Plug,
+  Rocket,
 } from 'lucide-react';
 import { APP } from '@/lib/routes';
 import UserMenu, { type SidebarProfile } from './UserMenu';
@@ -43,6 +45,7 @@ const NAV_GROUPS = [
     items: [
       { name: 'Inbox', icon: Inbox, href: APP.inbox },
       { name: 'Contacts', icon: Contact2, href: APP.contacts },
+      { name: 'Channels', icon: Plug, href: APP.channels },
     ],
   },
   {
@@ -113,6 +116,13 @@ export default function Sidebar({ profile }: { profile: SidebarProfile }) {
       </nav>
 
       <div className={styles.settings}>
+        <Link
+          href={APP.setup}
+          className={`${styles.navItem} ${isActive(pathname, APP.setup) ? styles.active : ''}`}
+        >
+          <Rocket className={styles.navIcon} size={20} />
+          Go-live checklist
+        </Link>
         <Link
           href={APP.settings}
           className={`${styles.navItem} ${
