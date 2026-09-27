@@ -10,5 +10,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    // Populates fake env vars before any module validates them on import.
+    setupFiles: ['./vitest.setup.ts'],
   },
 });

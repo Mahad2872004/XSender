@@ -210,3 +210,10 @@
   font-size: 11px;
   color: var(--sidebar-text);
 }
+
+/* Not part of the printed page. See the print block in app/layout.module.css. */
+@media print {
+  .sidebar {
+    display: none;
+  }
+}

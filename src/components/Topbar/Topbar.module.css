@@ -255,3 +255,9 @@
 .backLink:hover {
   color: var(--text-primary);
 }
+
+@media print {
+  .topbar {
+    display: none;
+  }
+}

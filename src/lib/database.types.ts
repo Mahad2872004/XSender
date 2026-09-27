@@ -386,6 +386,31 @@ export type Booking = {
   updated_at: string;
 };
 
+/**
+ * One row from public.roi_summary(). Counts arrive as strings from PostgREST on
+ * some drivers, so the caller coerces rather than trusting the type.
+ */
+export type RoiSummaryRow = {
+  turns_automated: number;
+  turns_by_person: number;
+  inbound_messages: number;
+  outbound_bot_messages: number;
+  conversations_total: number;
+  conversations_automated: number;
+  handoffs: number;
+  orders_captured: number;
+  orders_value_minor: number;
+  bookings_captured: number;
+  first_activity_at: string | null;
+};
+
+/** One day from public.roi_daily(). */
+export type RoiDailyRow = {
+  day: string;
+  turns_automated: number;
+  turns_by_person: number;
+};
+
 /** An anonymous visitor's throwaway conversation on the public demo. */
 export type DemoSession = {
   id: string;
@@ -520,6 +545,14 @@ export type Database = {
       };
       next_order_code: { Args: { ws: string }; Returns: string };
       next_booking_code: { Args: { ws: string }; Returns: string };
+      roi_summary: {
+        Args: { p_workspace: string; p_from: string; p_to: string };
+        Returns: RoiSummaryRow[];
+      };
+      roi_daily: {
+        Args: { p_workspace: string; p_from: string; p_to: string; p_timezone?: string };
+        Returns: RoiDailyRow[];
+      };
       is_workspace_member: { Args: { ws: string }; Returns: boolean };
       workspace_role_of: { Args: { ws: string }; Returns: WorkspaceRole };
       can_admin_workspace: { Args: { ws: string }; Returns: boolean };

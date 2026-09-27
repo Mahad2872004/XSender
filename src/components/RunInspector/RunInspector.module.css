@@ -1,0 +1,185 @@
+/* ===========================================================================
+   Run inspector.
+   Shared by the Simulator and the Inbox: the same "why did the bot say that?"
+   panel, whether the customer was simulated or real.
+   =========================================================================== */
+
+.inspector {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 18px;
+  max-height: min(72vh, 680px);
+  overflow-y: auto;
+}
+
+/* Inside the inbox's thread pane the panel is a full-height column, so it
+   drops the card chrome and lets the pane own the border. */
+.inspectorFlush {
+  border: none;
+  border-radius: 0;
+  max-height: none;
+  height: 100%;
+}
+
+.inspectorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.inspectorTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.runStatus {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--status-blue-bg);
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inspectorEmpty {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.inspectorError {
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: var(--status-red-bg);
+  color: #991b1b;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* The 24-hour window is not a bug, so it does not get the red treatment — it
+   is a WhatsApp rule the owner needs explaining, not an error to chase. */
+.inspectorWindow {
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: var(--status-yellow-bg);
+  color: #78350f;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.sectionLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.variables {
+  margin-bottom: 18px;
+}
+
+.variableList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.variableRow {
+  display: flex;
+  gap: 10px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: var(--bg-color);
+  font-size: 12.5px;
+}
+
+.variableKey {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.variableValue {
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.stepList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 7px 8px;
+  border-radius: 7px;
+}
+
+.step:hover {
+  background: var(--bg-color);
+}
+
+.stepIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.stepBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stepTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.stepType {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--bg-color);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+}
+
+.stepDetail {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.stepDuration {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.iconOk { color: var(--accent-green); }
+.iconError { color: var(--status-red); }
+.iconWait { color: var(--status-yellow); }
+.iconMuted { color: #cbd5e1; }

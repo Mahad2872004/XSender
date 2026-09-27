@@ -30,6 +30,18 @@ const queueSchema = z.object({
   QUEUE_DRAIN_SECRET: z.string().min(16),
 });
 
+/**
+ * Meta credentials. Kept separate for the same reason as the queue secret: a
+ * deployment with no WhatsApp channel connected should not fail to render every
+ * page because these are blank — only the webhook and the adapter need them.
+ */
+const metaSchema = z.object({
+  META_APP_SECRET: z.string().min(1),
+  /** Echoed back during Meta's webhook subscription handshake. */
+  META_WEBHOOK_VERIFY_TOKEN: z.string().min(1),
+  META_GRAPH_VERSION: z.string().default('v21.0'),
+});
+
 function format(error: z.ZodError, scope: string): never {
   const missing = error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`).join('\n');
   throw new Error(`Invalid ${scope} environment configuration:\n${missing}\n\nSee .env.example.`);
@@ -38,6 +50,7 @@ function format(error: z.ZodError, scope: string): never {
 let cachedPublic: z.infer<typeof publicSchema> | null = null;
 let cachedServer: z.infer<typeof serverSchema> | null = null;
 let cachedQueue: z.infer<typeof queueSchema> | null = null;
+let cachedMeta: z.infer<typeof metaSchema> | null = null;
 
 export function publicEnv() {
   if (cachedPublic) return cachedPublic;
@@ -84,4 +97,26 @@ export function queueEnv() {
   if (!parsed.success) format(parsed.error, 'queue');
   cachedQueue = parsed.data;
   return cachedQueue;
+}
+
+export function metaEnv() {
+  if (typeof window !== 'undefined') {
+    throw new Error('metaEnv() was called from the browser.');
+  }
+  if (cachedMeta) return cachedMeta;
+
+  const parsed = metaSchema.safeParse({
+    META_APP_SECRET: process.env.META_APP_SECRET,
+    META_WEBHOOK_VERIFY_TOKEN: process.env.META_WEBHOOK_VERIFY_TOKEN,
+    META_GRAPH_VERSION: process.env.META_GRAPH_VERSION,
+  });
+
+  if (!parsed.success) format(parsed.error, 'Meta');
+  cachedMeta = parsed.data;
+  return cachedMeta;
+}
+
+/** Whether Meta is configured at all, for routes that must not throw when it is not. */
+export function hasMetaConfig(): boolean {
+  return Boolean(process.env.META_APP_SECRET && process.env.META_WEBHOOK_VERIFY_TOKEN);
 }

@@ -18,3 +18,19 @@
   overflow-y: auto;
   padding: 0 32px 32px 32px;
 }
+
+/* Printing.
+   Only one screen prints — the ROI report an owner forwards to whoever holds the
+   budget — and what should come out is the document, not the application around
+   it. Handled here rather than in the report's own module because CSS Modules
+   hash their class names, so the report cannot reach the shell. */
+@media print {
+  .main {
+    margin-left: 0;
+    height: auto;
+  }
+  .content {
+    overflow: visible;
+    padding: 0;
+  }
+}
