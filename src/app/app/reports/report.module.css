@@ -1,0 +1,284 @@
+/* ===========================================================================
+   ROI report.
+
+   A document, not a dashboard. The sheet is sized and spaced for A4 so what the
+   owner reads on screen is what comes out of the printer, and the print rules at
+   the bottom strip the app chrome rather than trying to reflow it.
+   =========================================================================== */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+  max-width: 860px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 620;
+  color: var(--text-secondary);
+}
+
+.back:hover {
+  color: var(--text-primary);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  font-size: 12.5px;
+  font-weight: 620;
+  color: var(--text-primary);
+}
+
+.action:hover {
+  border-color: var(--accent-green);
+}
+
+/* ---------- The sheet ---------- */
+
+.sheet {
+  padding: 40px 44px 30px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+.sheetHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--text-primary);
+}
+
+.kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--sidebar-bg);
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.meta span:first-child {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ---------- Headline ---------- */
+
+.headline {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.headlineFigure {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.headlineValue {
+  font-size: 62px;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--sidebar-bg);
+  font-variant-numeric: tabular-nums;
+}
+
+.headlineUnit {
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.headlineBody {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+
+.headlineBody strong {
+  font-weight: 700;
+}
+
+/* ---------- Sections ---------- */
+
+.sectionTitle {
+  margin: 26px 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rowLabel {
+  padding: 9px 0;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.rowValue {
+  padding: 9px 0;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.rowTotal .rowLabel,
+.rowTotal .rowValue {
+  border-bottom: none;
+  border-top: 2px solid var(--text-primary);
+  padding-top: 11px;
+  font-weight: 700;
+}
+
+.rowTotal .rowValue {
+  font-size: 17px;
+}
+
+.assumptionTag {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--status-yellow-bg);
+  color: #92400e;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.note strong {
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+.emptyNote {
+  padding: 30px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.sheetFoot {
+  margin-top: 30px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ---------- Print ----------
+   The sidebar, topbar and page padding are dropped by the print block in
+   app/layout.module.css; here the sheet loses its card chrome so it sits flat
+   on the paper. */
+
+@media print {
+  .wrap {
+    max-width: none;
+    gap: 0;
+  }
+  .toolbar {
+    display: none;
+  }
+  .sheet {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .headlineValue {
+    color: #000;
+  }
+}
+
+@media (max-width: 720px) {
+  .sheet {
+    padding: 26px 22px 22px;
+  }
+  .sheetHead,
+  .headline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .meta {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .headlineValue {
+    font-size: 50px;
+  }
+}
